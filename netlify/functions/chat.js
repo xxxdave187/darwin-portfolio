@@ -32,33 +32,30 @@ exports.handler = async (event) => {
             return { statusCode: 400, body: JSON.stringify({ error: 'No messages provided.' }) };
         }
 
-        // Gemini uses "model" instead of "assistant", and a different message shape
-        const contents = messages.map(m => ({
-            role: m.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: m.content }]
-        }));
-
-        const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
-            {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents,
-                    systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-                    generationConfig: { maxOutputTokens: 400 }
-                })
-            }
-        );
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                max_tokens: 400,
+                messages: [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    ...messages
+                ]
+            })
+        });
 
         if (!response.ok) {
             const errText = await response.text();
-            console.error('Gemini API error:', errText);
+            console.error('Groq API error:', errText);
             return { statusCode: 502, body: JSON.stringify({ error: 'Upstream API error.' }) };
         }
 
         const data = await response.json();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text
+        const reply = data.choices?.[0]?.message?.content
             || "Sorry, I couldn't generate a response just now.";
 
         return {
