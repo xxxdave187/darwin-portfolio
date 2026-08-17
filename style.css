@@ -1026,7 +1026,7 @@ footer{
 
 #scrollTopBtn{
     position:fixed;
-    bottom:30px;right:30px;
+    bottom:30px;left:30px;
     width:46px;height:46px;
     border-radius:50%;
     border:1px solid var(--line);
@@ -1359,8 +1359,8 @@ html[data-theme="light"] .project-img-placeholder{
 
 .chatbot-panel{
     position:absolute;
-    bottom:74px;
-    right:0;
+    bottom:0;
+    right:74px;
     width:340px;
     height:460px;
     background:var(--surface);
@@ -1386,7 +1386,17 @@ html[data-theme="light"] .project-img-placeholder{
     padding:18px 20px;
     border-bottom:1px solid var(--line);
     display:flex;
-    flex-direction:column;
+    align-items:center;
+    gap:12px;
+}
+
+.chatbot-avatar{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    object-fit:cover;
+    filter:grayscale(1) contrast(1.05);
+    flex-shrink:0;
 }
 
 .chatbot-title{
@@ -1482,5 +1492,9 @@ html[data-theme="light"] .project-img-placeholder{
 }
 
 @media (max-width:480px){
-    .chatbot-panel{ width:calc(100vw - 40px); right:-8px; }
+    .chatbot-panel{
+        width:calc(100vw - 100px);
+        right:74px;
+        bottom:0;
+    }
 }
